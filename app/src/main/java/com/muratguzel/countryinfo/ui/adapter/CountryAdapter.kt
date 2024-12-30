@@ -4,14 +4,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.constraintlayout.widget.Placeholder
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.muratguzel.countryinfo.data.entity.ChildItem
 import com.muratguzel.countryinfo.data.entity.CountryItem
 import com.muratguzel.countryinfo.R
 import com.muratguzel.countryinfo.databinding.CountryItemBinding
+import com.muratguzel.countryinfo.util.imageDownload
 
-class CountryAdapter(private val countryList: List<CountryItem>) :
+
+class CountryAdapter(private val countryList: ArrayList<CountryItem>) :
     RecyclerView.Adapter<CountryAdapter.CountryViewHolder>() {
     inner class CountryViewHolder(val binding: CountryItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -20,6 +23,7 @@ class CountryAdapter(private val countryList: List<CountryItem>) :
             val adapter = ChildAdapter(childItemList)
             binding.childRecyclerView.adapter = adapter
         }
+
 
         private fun isAnyOpened(position: Int) {
             val temp = countryList.indexOfFirst {
@@ -56,15 +60,15 @@ class CountryAdapter(private val countryList: List<CountryItem>) :
                     binding.card1.startAnimation(downAnim)
                     binding.recyclerCard.startAnimation(downAnim)
 
-                }else{
+                } else {
                     binding.card1.startAnimation(upAnim)
                 }
 
-                if ( countryList[adapterPosition].Country2.isOpen){
+                if (countryList[adapterPosition].Country2.isOpen) {
                     binding.card2.startAnimation(upAnim)
                 }
                 countryList[adapterPosition].Country2.isOpen = false
-                notifyItemChanged(adapterPosition,Unit)
+                notifyItemChanged(adapterPosition, Unit)
             }
 
 
@@ -80,44 +84,61 @@ class CountryAdapter(private val countryList: List<CountryItem>) :
                 if (countryContent.isOpen) {
                     binding.card2.startAnimation(downAnim)
                     binding.recyclerCard.startAnimation(downAnim)
-                }else{
+                } else {
                     binding.card2.startAnimation(upAnim)
                 }
-                if ( countryList[adapterPosition].Country1.isOpen){
+                if (countryList[adapterPosition].Country1.isOpen) {
                     binding.card1.startAnimation(upAnim)
                 }
                 countryList[adapterPosition].Country1.isOpen = false
-                notifyItemChanged(adapterPosition,Unit)
+                notifyItemChanged(adapterPosition, Unit)
             }
 
         }
 
         fun bind(countryItem: CountryItem) {
+
             binding.countryTv.text = countryItem.Country1.name
-            binding.countryIv.setImageResource(R.drawable.and)
+            binding.countryIv.imageDownload(countryItem.Country1.flag)
 
             binding.country2Tv.text = countryItem.Country2.name
-            binding.country2Iv.setImageResource(R.drawable.dza) // duzeltilecek
+            binding.country2Iv.imageDownload(countryItem.Country2.flag)
 
+            // Elemanın özelliklerini kontrol et
+            if (countryItem.Country2.name!!.isEmpty() &&
+                countryItem.Country2.capital!!.isEmpty() &&
+                countryItem.Country2.region!!.isEmpty() &&
+                countryItem.Country2.currency!!.isEmpty() &&
+                countryItem.Country2.flag!!.isEmpty() &&
+                countryItem.Country2.language!!.isEmpty()
+            ) {
 
-            when (true) {
+                // Elemanın görünürlüğünü GONE olarak ayarla
+                binding.card2.visibility = View.GONE
+            } else {
+                // Elemanın görünürlüğünü VISIBLE olarak ayarla
+                binding.card2.visibility = View.VISIBLE
 
-                countryItem.Country1.isOpen -> {
-                    setChildRecyclerView(countryItem.Country1.childItemList)
-                }
+            }
 
-                countryItem.Country2.isOpen -> {
-                    setChildRecyclerView(countryItem.Country2.childItemList)
-                }
+                when (true) {
 
-                else -> {
-                    binding.recyclerCard.visibility = View.GONE
+                    countryItem.Country1.isOpen -> {
+                        setChildRecyclerView(countryItem.Country1.childItemList)
+                    }
 
+                    countryItem.Country2.isOpen -> {
+                        setChildRecyclerView(countryItem.Country2.childItemList)
+                    }
+
+                    else -> {
+                        binding.recyclerCard.visibility = View.GONE
+
+                    }
                 }
             }
         }
 
-    }
 
 
     override fun onBindViewHolder(
@@ -148,9 +169,14 @@ class CountryAdapter(private val countryList: List<CountryItem>) :
     override fun onBindViewHolder(holder: CountryViewHolder, position: Int) {
 
         holder.bind(countryList[position])
+
     }
 
-
+    fun updateAdapter(countryNewList : List<CountryItem>){
+        countryList.clear()
+        countryList.addAll(countryNewList)
+        notifyDataSetChanged()
+    }
 }
 
 

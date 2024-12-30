@@ -20,7 +20,7 @@ class ChildAdapter(private val childItemList: List<ChildItem>) :
     }
 
     override fun onBindViewHolder(holder: ChildViewHolder, position: Int) {
-        holder.binding.childLogoIv.setImageResource(childItemList[position].flag!!)
+        holder.binding.childLogoIv.setImageResource(childItemList[position].logo!!)
         holder.binding.childTitleTv.text = childItemList[position].name
     }
 
