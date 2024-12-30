@@ -1,6 +1,7 @@
 package com.muratguzel.countryinfo.data.datasource
 
 import android.content.Context
+import android.widget.Toast
 import com.muratguzel.countryinfo.R
 import com.muratguzel.countryinfo.data.entity.ChildItem
 import com.muratguzel.countryinfo.data.entity.Country
@@ -23,25 +24,22 @@ class CountryDataSource(context: Context) {
         val saveTime = privatessharedpreferences.getTime()
         val countryItemList: List<CountryItem>
         if (saveTime != null && saveTime != 0L && System.nanoTime() - saveTime < updateTime) {
-            countryItemList = getDataFromRoom(context) // Listeyi al
-
+            countryItemList = getDataFromRoom(context)
 
         } else {
-            countryItemList = getDataFromInternet(context) // Listeyi al
+            countryItemList = getDataFromInternet(context)
         }
         return countryItemList
     }
 
     suspend fun getDataFromInternet(context: Context): List<CountryItem> {
-
         return withContext(Dispatchers.IO) {
             countryList = countryApi.getData()
             val countryItemList = createCountryItem(countryList)
             saveToRoom(countryList, context)
-
             countryItemList
-
         }
+
 
     }
 
@@ -70,7 +68,7 @@ class CountryDataSource(context: Context) {
 
     }
 
-    suspend fun createCountryItem(countryList: List<Country>): List<CountryItem> {
+    fun createCountryItem(countryList: List<Country>): List<CountryItem> {
 
         for (country in countryList) {
             var childItemList = mutableListOf<ChildItem>()

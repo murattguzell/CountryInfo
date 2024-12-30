@@ -16,7 +16,6 @@ import com.muratguzel.countryinfo.ui.viewModel.CountryViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    var adapter = CountryAdapter(arrayListOf())
     private val countryViewModel: CountryViewModel by viewModels<CountryViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +40,8 @@ class MainActivity : AppCompatActivity() {
 
         countryViewModel.countryList.observe(this) { countryItemList ->
             countryItemList?.let {
+                var adapter = CountryAdapter(arrayListOf(),binding.mainRecyclerView)
+
                 adapter.updateAdapter(countryItemList)
                 binding.mainRecyclerView.adapter = adapter
                 binding.mainRecyclerView.visibility = View.VISIBLE

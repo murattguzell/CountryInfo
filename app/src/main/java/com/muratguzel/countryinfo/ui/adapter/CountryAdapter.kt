@@ -14,7 +14,7 @@ import com.muratguzel.countryinfo.databinding.CountryItemBinding
 import com.muratguzel.countryinfo.util.imageDownload
 
 
-class CountryAdapter(private val countryList: ArrayList<CountryItem>) :
+class CountryAdapter(private val countryList: ArrayList<CountryItem>,var recyclerView: RecyclerView) :
     RecyclerView.Adapter<CountryAdapter.CountryViewHolder>() {
     inner class CountryViewHolder(val binding: CountryItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -33,9 +33,15 @@ class CountryAdapter(private val countryList: ArrayList<CountryItem>) :
             if (temp >= 0 && temp != position) {
                 countryList[temp].Country1.isOpen = false
                 countryList[temp].Country2.isOpen = false
-                notifyItemChanged(temp, 12)
+                notifyItemChanged(temp, 12) // Görünümü güncelle
+                // Animasyonu güncelle
+                val viewHolder = recyclerView.findViewHolderForAdapterPosition(temp) as? CountryViewHolder
+                if (viewHolder != null) {
+                    val upAnim = AnimationUtils.loadAnimation(binding.root.context, R.anim.up)
+                    viewHolder.binding.card1.startAnimation(upAnim) // card1 animasyonunu güncelle
+                    viewHolder.binding.card2.startAnimation(upAnim) // card2 animasyonunu güncelle
+                }
             }
-
         }
 
         fun closeExpandedViews() {
